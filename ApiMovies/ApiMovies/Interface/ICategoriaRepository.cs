@@ -11,10 +11,11 @@ namespace ApiMovies.Interface.IGenericRepository
         {
             IEnumerable<T> GetAll();
             T GetById(object id);
-            void Add(T obj);
-            void Update(T obj);
-            void Delete(object id);
-            void Save();
+            bool Exist(object value);
+            bool Add(T obj);
+            bool Update(T obj);
+            bool Delete(object id);
+            bool Save();
         }
 
 }

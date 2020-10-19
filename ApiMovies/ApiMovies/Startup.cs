@@ -33,6 +33,20 @@ namespace ApiMovies
         {
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddAutoMapper(typeof(AutoMappers));
+
+            /*Documentation*/
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("ApiMovies", new Microsoft.OpenApi.Models.OpenApiInfo()
+                {
+                    Title = "Api Movies",
+                    Version = "v1",
+
+                });
+
+            });
+            /*End Documentation*/
+
             services.AddControllers();
         }
 
@@ -43,6 +57,15 @@ namespace ApiMovies
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            /*Documentation*/
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/ApiMovies/swagger.json", "Api Movies");
+                options.RoutePrefix = "";
+            });
+            /*End Documentation*/
 
             app.UseHttpsRedirection();
 

@@ -11,10 +11,10 @@ namespace ApiMovies.Models
 
         [Key]
         public int Id { get; set; }
-        public string Nombre { get; set; }
+        public string Nombre { get; set; }  
 
-        public DateTime FechaCrecion { get; set; }
-        public DateTime FechaActualizacion { get; set; }
+        public DateTime FechaCrecion { get; set; } = DateTime.Now;
+        public DateTime FechaActualizacion { get; set; } = DateTime.Now;
 
     }
 }

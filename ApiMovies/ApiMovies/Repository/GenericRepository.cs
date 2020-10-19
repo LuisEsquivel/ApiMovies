@@ -2,6 +2,7 @@
 using ApiMovies.Interface.IGenericRepository;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,34 +36,40 @@ namespace ApiMovies.Repository
 
         }
 
-        public void Add(T obj)
+        public Boolean Exist(object value)
         {
-            table.Add(obj);
-            Save();
+            return table.Any((Func<T, bool>)value);
         }
 
-        public void Update(T obj)
+        public Boolean Add(T obj)
+        {
+            table.Add(obj);
+            return Save();
+        }
+
+        public Boolean Update(T obj)
         {
             table.Attach(obj);
             _context.Entry(obj).State = EntityState.Modified;
-            Save();
+            return Save();
         }
 
-        public void Delete(object id)
+        public Boolean Delete(object id)
         {
             T row = table.Find(id);
 
             if (row != null)
             {
                 table.Remove(row);
-                Save();
+                return  Save();
             }
 
+            return false;
         }
 
-        public void Save()
+        public bool Save()
         {
-            _context.SaveChanges();
+            return _context.SaveChanges() >= 0 ? true : false;
         }
     }
 }
