@@ -50,6 +50,20 @@ namespace ApiMovies.Controllers
         }
 
 
+
+        [HttpGet("GetById/{Id:int}")]
+        public IActionResult GetById(int Id)
+        {
+            var row = repository.GetById(Id);
+
+            var rowDto = new List<CategoriaDTO>();
+
+            rowDto.Add(mapper.Map<CategoriaDTO>(row));
+            
+            return Ok(rowDto);
+        }
+
+
         [HttpPost("Add")]
         public IActionResult Add([FromBody] CategoriaDTO model)
         {
@@ -104,8 +118,8 @@ namespace ApiMovies.Controllers
 
 
 
-        [HttpDelete("{Id:int}" , Name = "Delete")]
-        public IActionResult Delete([FromBody] int Id)
+        [HttpDelete("Delete/{Id:int}")]
+        public IActionResult Delete(int Id)
         {
             if (Id <= 0)
             {

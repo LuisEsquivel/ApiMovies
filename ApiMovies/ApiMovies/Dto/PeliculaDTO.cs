@@ -1,32 +1,35 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using static ApiMovies.Models.Pelicula;
 
-namespace ApiMovies.Models
+namespace ApiMovies.Dto
 {
-    public class Pelicula
+    public class PeliculaDTO
     {
 
-        [Key]
         public int Id { get; set; }
+
+        [Required (ErrorMessage ="El nombre es requerido") ]
         public string Nombre { get; set; }
+
+        [Required(ErrorMessage = "La Descripción es requerida")]
         public string Descripcion { get; set; }
         public string RutaImagen { get; set; }
+
+        public IFormFile ImageFile { get; set; }
 
         public DateTime FechaCreacion { get; set; } = DateTime.Now;
 
         public DateTime FechaActualizacion { get; set; } = DateTime.Now;
 
-        public enum TipoClasificacion { Siete, Trece, Dieciseis, Dieciocho}
-
         public TipoClasificacion Clasificacion { get; set; }
 
+        [Required(ErrorMessage = "La Categoría es requerida")]
         public int CategoriaId { get; set; }
 
-        [ForeignKey("CategoriaId")]
-        public Categoria Categoria { get; set; }
     }
 }

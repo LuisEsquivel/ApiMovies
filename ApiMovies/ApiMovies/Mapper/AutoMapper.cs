@@ -14,6 +14,8 @@ namespace ApiMovies.Mapper
         public AutoMappers()
         {
             CreateMap<Categoria, CategoriaDTO>().ReverseMap();
+
+            CreateMap<Pelicula, PeliculaDTO>().ReverseMap();
         }
 
     }
