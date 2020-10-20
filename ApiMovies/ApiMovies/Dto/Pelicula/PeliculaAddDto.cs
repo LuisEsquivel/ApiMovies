@@ -8,7 +8,7 @@ using static ApiMovies.Models.Pelicula;
 
 namespace ApiMovies.Dto
 {
-    public class PeliculaDTO
+    public class PeliculaAddDto
     {
 
         public int Id { get; set; }
@@ -26,7 +26,7 @@ namespace ApiMovies.Dto
 
         public DateTime FechaActualizacion { get; set; } = DateTime.Now;
 
-        public TipoClasificacion Clasificacion { get; set; }
+        public TipoClasificacion Clasificacion { get; set; } = 0;
 
         [Required(ErrorMessage = "La Categoría es requerida")]
         public int CategoriaId { get; set; }

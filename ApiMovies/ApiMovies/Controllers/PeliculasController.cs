@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using ApiMovies.Data;
 using ApiMovies.Dto;
@@ -17,6 +18,10 @@ using Microsoft.Extensions.Hosting.Internal;
 
 namespace ApiMovies.Controllers
 {
+
+    /// <summary>
+    /// Peliculas Controller
+    /// </summary>
     [Route("api/peliculas/")]
     [ApiController]
     public class PeliculasController : ControllerBase
@@ -28,6 +33,12 @@ namespace ApiMovies.Controllers
         private IWebHostEnvironment hostEnvironment;
 
 
+        /// <summary>
+        /// Controlador de película
+        /// </summary>
+        /// <param name="_mapper"></param>
+        /// <param name="context"></param>
+        /// <param name="_hostEnvironment"></param>
         public PeliculasController(IMapper _mapper, ApplicationDbContext context, IWebHostEnvironment _hostEnvironment)
         {
             repository = new GenericRepository<Pelicula>(context);
@@ -36,16 +47,22 @@ namespace ApiMovies.Controllers
         }
 
         
+
+        /// <summary>
+        /// Obtener todas las películas
+        /// </summary>
+        /// <returns></returns>
         [HttpGet ("Get")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult Get()
         {
             var list = repository.GetAll();
 
-            var listDto = new List<PeliculaDTO>();
+            var listDto = new List<PeliculaAddDto>();
 
             foreach (var row in list)
             {
-                listDto.Add(mapper.Map<PeliculaDTO>(row));
+                listDto.Add(mapper.Map<PeliculaAddDto>(row));
             }
 
 
@@ -55,22 +72,38 @@ namespace ApiMovies.Controllers
 
 
 
+        /// <summary>
+        /// Obtener la película por Id
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns>Una película</returns>
+
         [HttpGet("GetById/{Id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetById(int Id)
         {
             var row = repository.GetById(Id);
 
-            var rowDto = new List<PeliculaDTO>();
+            var rowDto = new List<PeliculaAddDto>();
 
-            rowDto.Add(mapper.Map<PeliculaDTO>(row));
+            rowDto.Add(mapper.Map<PeliculaAddDto>(row));
 
             return Ok(rowDto);
         }
 
 
 
+
+        /// <summary>
+        /// Agregar una nueva película
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns>Status 200</returns>
         [HttpPost ("Add")]
-        public IActionResult Add([FromForm] PeliculaDTO dto)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult Add([FromForm] PeliculaAddDto dto)
         {
 
             if(dto == null)
@@ -111,7 +144,7 @@ namespace ApiMovies.Controllers
             if (!repository.Add(row))
             {
                 ModelState.AddModelError("", $"Algo salió mal al guardar la película: {dto.Nombre}");
-                return StatusCode(404, ModelState);
+                return StatusCode(500, ModelState);
             }
 
             return Ok();
@@ -119,8 +152,17 @@ namespace ApiMovies.Controllers
         }
 
 
+
+        /// <summary>
+        /// Actualizar la película
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns>Status 200</returns>
         [HttpPut("Update")]
-        public IActionResult Update([FromBody] PeliculaDTO dto)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult Update([FromBody] PeliculaUpdateDto dto)
         {
 
             if (dto == null)
@@ -134,20 +176,63 @@ namespace ApiMovies.Controllers
                 return StatusCode(404, ModelState);
             }
 
-            var row = mapper.Map<Pelicula>(dto);
+            /*subir imágen*/
+            var image = dto.ImageFile;
+            var PathRoot = hostEnvironment.WebRootPath;
 
+            if (image.Length > 0)
+            {
+
+                var old = from o in repository.GetAll()
+                          where o.Id == dto.Id
+                          select o.RutaImagen;
+
+                if(old != null)
+                {
+                    var OldPathComplete = Path.Combine(PathRoot + old);
+
+                    if (System.IO.File.Exists(OldPathComplete))
+                    {
+                        System.IO.File.Delete(OldPathComplete);
+                    }
+                }
+
+                var files = HttpContext.Request.Form.Files;
+                var upload = Path.Combine(PathRoot, @"fotos");
+                var extension = Path.GetExtension(files[0].FileName);
+                var name = Guid.NewGuid().ToString();
+
+                using (var FileStream = new FileStream(Path.Combine(upload, name + extension), FileMode.Create))
+                {
+                    files[0].CopyTo(FileStream);
+                }
+
+                dto.RutaImagen = @"fotos/" + name + extension;
+
+            }
+
+            var row = mapper.Map<Pelicula>(dto);
 
             if (!repository.Add(row))
             {
                 ModelState.AddModelError("", $"Algo salió mal al actualizar la película: {dto.Nombre}");
-                return StatusCode(404, ModelState);
+                return StatusCode(500, ModelState);
             }
 
             return Ok();
 
         }
 
+
+        /// <summary>
+        /// Acción de eliminar el campo Id es requerido
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns>Status Code 200</returns>
         [HttpDelete("Delete/{Id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult Delete(int Id)
         {
 
@@ -166,7 +251,7 @@ namespace ApiMovies.Controllers
             if (!repository.Delete(Id))
             {
                 ModelState.AddModelError("", $"Algo salió mal al eliminar la película");
-                return StatusCode(404, ModelState);
+                return StatusCode(500, ModelState);
             }
 
             return Ok();

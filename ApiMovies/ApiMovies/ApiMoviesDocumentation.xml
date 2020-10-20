@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ApiMovies</name>
+    </assembly>
+    <members>
+        <member name="T:ApiMovies.Controllers.CategoriasController">
+            <summary>
+            Categorías Controller
+            </summary>
+        </member>
+        <member name="M:ApiMovies.Controllers.CategoriasController.#ctor(AutoMapper.IMapper,ApiMovies.Data.ApplicationDbContext)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="_mapper"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:ApiMovies.Controllers.CategoriasController.Get">
+            <summary>
+             Obtener todas las categorías 
+            </summary>
+            <returns>StatusCode 200</returns>
+        </member>
+        <member name="M:ApiMovies.Controllers.CategoriasController.GetById(System.Int32)">
+            <summary>
+            Obtener la categoría por el Id
+            </summary>
+            <param name="Id"></param>
+            <returns>StatusCode 200</returns>
+        </member>
+        <member name="M:ApiMovies.Controllers.CategoriasController.Add(ApiMovies.Dto.CategoriaAddDto)">
+            <summary>
+            Agregar una nueva categoría
+            </summary>
+            <param name="model"></param>
+            <returns>StatusCode 200</returns>
+        </member>
+        <member name="M:ApiMovies.Controllers.CategoriasController.Update(ApiMovies.Dto.CategoriaUpdateDto)">
+            <summary>
+            Actualizar categoría
+            </summary>
+            <param name="model"></param>
+            <returns>StatusCode 200</returns>
+        </member>
+        <member name="M:ApiMovies.Controllers.CategoriasController.Delete(System.Int32)">
+            <summary>
+            Eliminar una categoría por Id
+            </summary>
+            <param name="Id"></param>
+            <returns>StatusCode 200</returns>
+        </member>
+        <member name="T:ApiMovies.Controllers.PeliculasController">
+            <summary>
+            Peliculas Controller
+            </summary>
+        </member>
+        <member name="M:ApiMovies.Controllers.PeliculasController.#ctor(AutoMapper.IMapper,ApiMovies.Data.ApplicationDbContext,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            Controlador de película
+            </summary>
+            <param name="_mapper"></param>
+            <param name="context"></param>
+            <param name="_hostEnvironment"></param>
+        </member>
+        <member name="M:ApiMovies.Controllers.PeliculasController.Get">
+            <summary>
+            Obtener todas las películas
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiMovies.Controllers.PeliculasController.GetById(System.Int32)">
+            <summary>
+            Obtener la película por Id
+            </summary>
+            <param name="Id"></param>
+            <returns>Una película</returns>
+        </member>
+        <member name="M:ApiMovies.Controllers.PeliculasController.Add(ApiMovies.Dto.PeliculaAddDto)">
+            <summary>
+            Agregar una nueva película
+            </summary>
+            <param name="dto"></param>
+            <returns>Status 200</returns>
+        </member>
+        <member name="M:ApiMovies.Controllers.PeliculasController.Update(ApiMovies.Dto.PeliculaUpdateDto)">
+            <summary>
+            Actualizar la película
+            </summary>
+            <param name="dto"></param>
+            <returns>Status 200</returns>
+        </member>
+        <member name="M:ApiMovies.Controllers.PeliculasController.Delete(System.Int32)">
+            <summary>
+            Acción de eliminar el campo Id es requerido
+            </summary>
+            <param name="Id"></param>
+            <returns>Status Code 200</returns>
+        </member>
+        <member name="M:ApiMovies.Controllers.UsuariosController.Get">
+            <summary>
+            Obtener todos los usuarios
+            </summary>
+            <returns>StatusCode 200</returns>
+        </member>
+        <member name="M:ApiMovies.Controllers.UsuariosController.GetById(System.Int32)">
+            <summary>
+            Obtener usuario por Id
+            </summary>
+            <param name="Id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiMovies.Controllers.UsuariosController.Add(ApiMovies.Dto.Usuario.UsuarioAuthDto)">
+            <summary>
+            Registro de usuario
+            </summary>
+            <param name="dto"></param>
+            <returns>StatusCode 200</returns>
+        </member>
+        <member name="M:ApiMovies.Controllers.UsuariosController.Login(ApiMovies.Dto.Usuario.UsuarioAuthDto)">
+            <summary>
+            Login con Email y Password
+            </summary>
+            <param name="dto"></param>
+            <returns>StatusCode 200</returns>
+        </member>
+    </members>
+</doc>

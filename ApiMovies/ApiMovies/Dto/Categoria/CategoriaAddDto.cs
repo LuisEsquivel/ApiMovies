@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace ApiMovies.Dto
 {
-    public class CategoriaDTO
+    public class CategoriaAddDto
     {
 
         public int Id { get; set; }
 
-        [Required (ErrorMessage = "El Nombre es Obligatorio")]
+        [Required (ErrorMessage = "El Nombre es Requerido")]
         public string Nombre { get; set; }
 
     }

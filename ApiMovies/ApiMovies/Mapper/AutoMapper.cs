@@ -1,4 +1,5 @@
 ﻿using ApiMovies.Dto;
+using ApiMovies.Dto.Usuario;
 using ApiMovies.Models;
 using AutoMapper;
 using System;
@@ -13,9 +14,17 @@ namespace ApiMovies.Mapper
 
         public AutoMappers()
         {
-            CreateMap<Categoria, CategoriaDTO>().ReverseMap();
+            CreateMap<Usuario, UsuarioDto>().ReverseMap();
 
-            CreateMap<Pelicula, PeliculaDTO>().ReverseMap();
+            CreateMap<Usuario, UsuarioAuthDto>().ReverseMap();
+
+            CreateMap<Categoria, CategoriaAddDto>().ReverseMap();
+
+            CreateMap<Categoria, CategoriaUpdateDto>().ReverseMap();
+
+            CreateMap<Pelicula, PeliculaAddDto>().ReverseMap();
+
+            CreateMap<Pelicula, PeliculaUpdateDto>().ReverseMap();
         }
 
     }

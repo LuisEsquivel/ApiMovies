@@ -17,6 +17,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ApiMovies.Controllers
 {
+
+
+    /// <summary>
+    /// Categorías Controller
+    /// </summary>
     [Route("api/categorias/")]
     [ApiController]
     public class CategoriasController : Controller
@@ -26,6 +31,12 @@ namespace ApiMovies.Controllers
         private IGenericRepository<Categoria> repository;
         private IMapper mapper;
 
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="_mapper"></param>
+        /// <param name="context"></param>
         public CategoriasController(IMapper _mapper, ApplicationDbContext context)
         {
             this.repository = new GenericRepository<Categoria>(context);
@@ -33,39 +44,61 @@ namespace ApiMovies.Controllers
         }
 
 
+
+
+        /// <summary>
+        ///  Obtener todas las categorías 
+        /// </summary>
+        /// <returns>StatusCode 200</returns>
         [HttpGet("Get")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult Get()
         {
             var list = repository.GetAll();
 
-            var listDto = new List<CategoriaDTO>();
+            var listDto = new List<CategoriaAddDto>();
 
             foreach (var row in list)
             {
-                listDto.Add(mapper.Map<CategoriaDTO>(row));
+                listDto.Add(mapper.Map<CategoriaAddDto>(row));
             }
-
 
             return Ok(listDto);
         }
 
 
 
+
+        /// <summary>
+        /// Obtener la categoría por el Id
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns>StatusCode 200</returns>
         [HttpGet("GetById/{Id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetById(int Id)
         {
             var row = repository.GetById(Id);
 
-            var rowDto = new List<CategoriaDTO>();
+            var rowDto = new List<CategoriaAddDto>();
 
-            rowDto.Add(mapper.Map<CategoriaDTO>(row));
+            rowDto.Add(mapper.Map<CategoriaAddDto>(row));
             
             return Ok(rowDto);
         }
 
 
+
+        /// <summary>
+        /// Agregar una nueva categoría
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>StatusCode 200</returns>
         [HttpPost("Add")]
-        public IActionResult Add([FromBody] CategoriaDTO model)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult Add([FromBody] CategoriaAddDto model)
         {
             if (model == null)
             {
@@ -83,15 +116,24 @@ namespace ApiMovies.Controllers
             if (!repository.Add(categoria))
             {
                 ModelState.AddModelError("", $"Algo salió mal guardar el registro: {model.Nombre}");
-                return StatusCode(404, ModelState);
+                return StatusCode(500, ModelState);
             }
 
             return Ok();
         }
 
 
+
+        /// <summary>
+        /// Actualizar categoría
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>StatusCode 200</returns>
         [HttpPut("Update")]
-        public IActionResult Update([FromBody] CategoriaDTO model)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult Update([FromBody] CategoriaUpdateDto model)
         {
             if (model == null)
             {
@@ -109,7 +151,7 @@ namespace ApiMovies.Controllers
             if (!repository.Update(categoria))
             {
                 ModelState.AddModelError("", $"Algo salió mal actualizar el registro: {model.Nombre}");
-                return StatusCode(404, ModelState);
+                return StatusCode(500, ModelState);
             }
 
             return Ok();
@@ -117,8 +159,15 @@ namespace ApiMovies.Controllers
 
 
 
-
+        /// <summary>
+        /// Eliminar una categoría por Id
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns>StatusCode 200</returns>
         [HttpDelete("Delete/{Id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult Delete(int Id)
         {
             if (Id <= 0)
@@ -143,7 +192,7 @@ namespace ApiMovies.Controllers
             if (!repository.Delete(categoria))
             {
                 ModelState.AddModelError("", $"Algo salió mal al eliminar el registro: {delete.Nombre}");
-                return StatusCode(404, ModelState);
+                return StatusCode(500, ModelState);
             }
 
             return Ok();

@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using ApiMovies.Data;
 using ApiMovies.Interface.IGenericRepository;
 using ApiMovies.Mapper;
 using ApiMovies.Repository;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -16,6 +20,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ApiMovies
 {
@@ -32,7 +38,27 @@ namespace ApiMovies
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+
+            /*Generate Token*/
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(options =>
+                    {
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuerSigningKey = true,
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
+                            ValidateIssuer = false,
+                            ValidateAudience = false
+                        };
+
+                    });
+
+
+            //Add AutoMapper
             services.AddAutoMapper(typeof(AutoMappers));
+
+   
 
             /*Documentation*/
             services.AddSwaggerGen(options =>
@@ -43,6 +69,12 @@ namespace ApiMovies
                     Version = "v1",
 
                 });
+
+
+                //File Comments Documentation
+                //var FileCommentsDocumentation = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var PathFileCommentsDocumentation = Path.Combine(AppContext.BaseDirectory, "ApiMoviesDocumentation.xml");
+                options.IncludeXmlComments(PathFileCommentsDocumentation);
 
             });
             /*End Documentation*/
@@ -56,6 +88,7 @@ namespace ApiMovies
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                IdentityModelEventSource.ShowPII = true;
             }
 
             /*Documentation*/
