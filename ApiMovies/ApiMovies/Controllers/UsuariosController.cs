@@ -49,11 +49,11 @@ namespace ApiMovies.Controllers
         {
 
             var dto = repository.GetAll();
-            var user = new List<Usuario>();
+            var user = new List<UsuarioDto>();
 
             foreach (var row in dto)
             {
-                user.Add(mapper.Map<Usuario>(row));
+                user.Add(mapper.Map<UsuarioDto>(row));
             }
             
 
