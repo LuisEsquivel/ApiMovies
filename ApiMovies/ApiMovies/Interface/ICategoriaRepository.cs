@@ -13,7 +13,7 @@ namespace ApiMovies.Interface.IGenericRepository
             T GetById(object id);
             bool Exist(object value);
             bool Add(T obj);
-            bool Update(T obj);
+            bool Update(T obj, int id = 0);
             bool Delete(object id);
             bool Save();
         }

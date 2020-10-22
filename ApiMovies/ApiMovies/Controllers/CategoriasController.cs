@@ -148,7 +148,7 @@ namespace ApiMovies.Controllers
 
             var categoria = mapper.Map<Categoria>(model);
 
-            if (!repository.Update(categoria))
+            if (!repository.Update(categoria, categoria.Id))
             {
                 ModelState.AddModelError("", $"Algo salió mal actualizar el registro: {model.Nombre}");
                 return StatusCode(500, ModelState);

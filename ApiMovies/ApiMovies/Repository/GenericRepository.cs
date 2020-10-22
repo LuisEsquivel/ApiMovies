@@ -47,11 +47,17 @@ namespace ApiMovies.Repository
             return Save();
         }
 
-        public Boolean Update(T obj)
+        public Boolean Update(T obj, int id = 0)
         {
+            if (id > 0) {
+                var exist = table.Find(id);
+                if (exist != null) { _context.Entry(exist).State = EntityState.Detached; }
+            };
+            
             table.Attach(obj);
             _context.Entry(obj).State = EntityState.Modified;
             return Save();
+
         }
 
         public Boolean Delete(object id)

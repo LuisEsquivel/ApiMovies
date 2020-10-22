@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -170,7 +171,7 @@ namespace ApiMovies.Controllers
                 return BadRequest();
             }
 
-            if (repository.GetAll().Where(x => x.Nombre == dto.Nombre && x.Id == dto.Id).ToList().Count > 0)
+            if (repository.GetAll().Where(x => x.Nombre == dto.Nombre && x.Id != dto.Id).ToList().Count > 0)
             {
                 ModelState.AddModelError("", $"Ya existe una película con el Nombre: {dto.Nombre}");
                 return StatusCode(404, ModelState);
@@ -180,7 +181,8 @@ namespace ApiMovies.Controllers
             var image = dto.ImageFile;
             var PathRoot = hostEnvironment.WebRootPath;
 
-            if (image.Length > 0)
+       
+            if (image != null)
             {
 
                 var old = from o in repository.GetAll()
@@ -211,9 +213,10 @@ namespace ApiMovies.Controllers
 
             }
 
+
             var row = mapper.Map<Pelicula>(dto);
 
-            if (!repository.Add(row))
+            if (!repository.Update(row, row.Id))
             {
                 ModelState.AddModelError("", $"Algo salió mal al actualizar la película: {dto.Nombre}");
                 return StatusCode(500, ModelState);
