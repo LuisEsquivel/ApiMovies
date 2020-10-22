@@ -14,5 +14,6 @@ namespace ApiMovies.Dto
 
         [Required(ErrorMessage = "El Nombre es Requerido")]
         public string Nombre { get; set; }
+
     }
 }

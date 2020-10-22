@@ -24,12 +24,11 @@ namespace ApiMovies.Dto
 
         public DateTime FechaCreacion { get; set; } = DateTime.Now;
 
-        public DateTime FechaActualizacion { get; set; } = DateTime.Now;
-
         public TipoClasificacion Clasificacion { get; set; } = 0;
 
         [Required(ErrorMessage = "La Categoría es requerida")]
         public int CategoriaId { get; set; }
+
 
     }
 }

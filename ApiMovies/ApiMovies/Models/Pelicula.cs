@@ -16,7 +16,7 @@ namespace ApiMovies.Models
         public string Descripcion { get; set; }
         public string RutaImagen { get; set; }
 
-        public DateTime FechaCreacion { get; set; } = DateTime.Now;
+        public DateTime FechaCreacion { get; set; }
 
         public DateTime FechaActualizacion { get; set; } = DateTime.Now;
 

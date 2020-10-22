@@ -80,6 +80,9 @@ namespace ApiMovies
             /*End Documentation*/
 
             services.AddControllers();
+
+            /*Soporte para CORS*/
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -110,6 +113,10 @@ namespace ApiMovies
             {
                 endpoints.MapControllers();
             });
+
+
+            /*Soporte para CORS*/
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
         }
     }
 }
