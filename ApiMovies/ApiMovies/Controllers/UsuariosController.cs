@@ -135,7 +135,7 @@ namespace ApiMovies.Controllers
                 return Unauthorized();
             }
 
-            var user = repository.GetAll().Where(x => x.Email == dto.Email).FirstOrDefault();
+            var user = repository.GetByValues(x => x.Email == dto.Email).FirstOrDefault();
 
             if (!ValidatePassword(dto.Password, user.PasswordHash, user.PasswordSalt))
             {

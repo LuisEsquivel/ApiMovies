@@ -93,30 +93,31 @@ namespace ApiMovies.Controllers
         /// <summary>
         /// Agregar una nueva categoría
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="dto"></param>
         /// <returns>StatusCode 200</returns>
         [HttpPost("Add")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult Add([FromBody] CategoriaAddDto model)
+        public IActionResult Add([FromBody] CategoriaAddDto dto)
         {
-            if (model == null)
+            if (dto == null)
             {
                 return BadRequest();
             }
 
-            if (repository.GetAll().Where(x => x.Nombre == model.Nombre).ToList().Count > 0)
+
+            if (repository.Exist(x => x.Nombre == dto.Nombre))
             {
                 ModelState.AddModelError("", "La Categoría ya existe!!");
                 return StatusCode(404, ModelState);
             }
 
-            var categoria = mapper.Map<Categoria>(model);
+            var categoria = mapper.Map<Categoria>(dto);
 
             if (!repository.Add(categoria))
             {
-                ModelState.AddModelError("", $"Algo salió mal guardar el registro: {model.Nombre}");
+                ModelState.AddModelError("", $"Algo salió mal guardar el registro: {dto.Nombre}");
                 return StatusCode(500, ModelState);
             }
 
@@ -128,30 +129,30 @@ namespace ApiMovies.Controllers
         /// <summary>
         /// Actualizar categoría
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="dto"></param>
         /// <returns>StatusCode 200</returns>
         [HttpPut("Update")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult Update([FromBody] CategoriaUpdateDto model)
+        public IActionResult Update([FromBody] CategoriaUpdateDto dto)
         {
-            if (model == null)
+            if (dto == null)
             {
                 return BadRequest();
             }
 
-            if (repository.GetAll().Where(x => x.Nombre == model.Nombre && x.Id != model.Id).ToList().Count > 0)
+            if (repository.Exist(x => x.Nombre == dto.Nombre && x.Id != dto.Id))
             {
                 ModelState.AddModelError("", "La Categoría ya existe!!");
                 return StatusCode(404, ModelState);
             }
 
-            var categoria = mapper.Map<Categoria>(model);
+            var categoria = mapper.Map<Categoria>(dto);
 
             if (!repository.Update(categoria, categoria.Id))
             {
-                ModelState.AddModelError("", $"Algo salió mal actualizar el registro: {model.Nombre}");
+                ModelState.AddModelError("", $"Algo salió mal actualizar el registro: {dto.Nombre}");
                 return StatusCode(500, ModelState);
             }
 
@@ -180,13 +181,13 @@ namespace ApiMovies.Controllers
             }
    
 
-            if (repository.GetAll().Where(x => x.Id == Id).ToList().Count == 0)
+            if (repository.Exist(x => x.Id == Id))
             {
                 ModelState.AddModelError("", $"La categoría con Id: {Id} No existe");
                 return StatusCode(404, ModelState);
             }
 
-            var delete =repository.GetAll().Where(x => x.Id == Id).FirstOrDefault();
+            var delete =repository.GetByValues(x => x.Id == Id).FirstOrDefault();
 
             var categoria = mapper.Map<Categoria>(delete);
 

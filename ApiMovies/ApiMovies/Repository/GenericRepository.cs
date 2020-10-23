@@ -36,9 +36,14 @@ namespace ApiMovies.Repository
 
         }
 
-        public Boolean Exist(object value)
+        public IEnumerable<T> GetByValues(Func<T, bool> values)
         {
-            return table.Any((Func<T, bool>)value);
+            return table.Where(values).AsEnumerable();
+        }
+
+        public bool Exist(Func<T, bool> values)
+        {
+           return  table.Where(values).AsEnumerable().Count() > 0 ? true : false;
         }
 
         public Boolean Add(T obj)

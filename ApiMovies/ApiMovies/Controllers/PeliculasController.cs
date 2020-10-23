@@ -134,7 +134,7 @@ namespace ApiMovies.Controllers
             }
           
 
-            if(repository.GetAll().Where(x => x.Nombre == dto.Nombre).ToList().Count > 0)
+            if(repository.Exist(x => x.Nombre == dto.Nombre))
             {
                 ModelState.AddModelError("", $"Ya existe una pelicula con el Nombre: {dto.Nombre}");
                 return StatusCode(404, ModelState);
@@ -172,7 +172,7 @@ namespace ApiMovies.Controllers
                 return BadRequest();
             }
 
-            if (repository.GetAll().Where(x => x.Nombre == dto.Nombre && x.Id != dto.Id).ToList().Count > 0)
+            if (repository.Exist(x => x.Nombre == dto.Nombre && x.Id != dto.Id))
             {
                 ModelState.AddModelError("", $"Ya existe una película con el Nombre: {dto.Nombre}");
                 return StatusCode(404, ModelState);
@@ -186,8 +186,7 @@ namespace ApiMovies.Controllers
             if (image != null)
             {
 
-                var old = from o in repository.GetAll()
-                          where o.Id == dto.Id
+                var old = from o in repository.GetByValues(x => x.Id == dto.Id)
                           select o.RutaImagen;
 
                 if(old != null)
@@ -246,7 +245,7 @@ namespace ApiMovies.Controllers
                 return StatusCode(404, ModelState);
             }
 
-            if(repository.GetAll().Where(x => x.Id == Id).ToList().Count == 0)
+            if(repository.Exist(x => x.Id == Id))
             {
                 ModelState.AddModelError("", $"No existe la película");
                 return StatusCode(404, ModelState);

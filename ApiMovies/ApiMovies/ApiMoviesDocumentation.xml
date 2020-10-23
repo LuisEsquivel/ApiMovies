@@ -33,14 +33,14 @@
             <summary>
             Agregar una nueva categoría
             </summary>
-            <param name="model"></param>
+            <param name="dto"></param>
             <returns>StatusCode 200</returns>
         </member>
         <member name="M:ApiMovies.Controllers.CategoriasController.Update(ApiMovies.Dto.CategoriaUpdateDto)">
             <summary>
             Actualizar categoría
             </summary>
-            <param name="model"></param>
+            <param name="dto"></param>
             <returns>StatusCode 200</returns>
         </member>
         <member name="M:ApiMovies.Controllers.CategoriasController.Delete(System.Int32)">
