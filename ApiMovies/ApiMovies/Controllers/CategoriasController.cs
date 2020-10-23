@@ -24,6 +24,7 @@ namespace ApiMovies.Controllers
     /// </summary>
     [Route("api/categorias/")]
     [ApiController]
+    [ApiExplorerSettings (GroupName="ApiCategorias")]
     public class CategoriasController : Controller
     {
 

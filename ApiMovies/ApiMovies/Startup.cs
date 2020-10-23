@@ -77,6 +77,42 @@ namespace ApiMovies
                 options.IncludeXmlComments(PathFileCommentsDocumentation);
 
             });
+
+
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("ApiCategorias", new Microsoft.OpenApi.Models.OpenApiInfo()
+                {
+                    Title = "Api Movies",
+                    Version = "v1",
+
+                });
+
+
+                //File Comments Documentation
+                //var FileCommentsDocumentation = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var PathFileCommentsDocumentation = Path.Combine(AppContext.BaseDirectory, "ApiMoviesDocumentation.xml");
+                options.IncludeXmlComments(PathFileCommentsDocumentation);
+
+            });
+
+
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("ApiUsuarios", new Microsoft.OpenApi.Models.OpenApiInfo()
+                {
+                    Title = "Api Movies",
+                    Version = "v1",
+
+                });
+
+
+                //File Comments Documentation
+                //var FileCommentsDocumentation = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var PathFileCommentsDocumentation = Path.Combine(AppContext.BaseDirectory, "ApiMoviesDocumentation.xml");
+                options.IncludeXmlComments(PathFileCommentsDocumentation);
+
+            });
             /*End Documentation*/
 
             services.AddControllers();
@@ -99,6 +135,8 @@ namespace ApiMovies
             app.UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint("/swagger/ApiMovies/swagger.json", "Api Movies");
+                options.SwaggerEndpoint("/swagger/ApiCategorias/swagger.json", "Api Categorias");
+                options.SwaggerEndpoint("/swagger/ApiUsuarios/swagger.json", "Api Usuarios");
                 options.RoutePrefix = "";
             });
             /*End Documentation*/

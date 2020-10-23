@@ -23,6 +23,7 @@ namespace ApiMovies.Controllers
 {
     [Route("api/usuario/")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "ApiUsuarios")]
     public class UsuariosController : Controller
     {
 

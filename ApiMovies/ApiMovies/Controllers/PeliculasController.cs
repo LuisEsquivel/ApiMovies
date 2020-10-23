@@ -25,6 +25,7 @@ namespace ApiMovies.Controllers
     /// </summary>
     [Route("api/peliculas/")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "ApiMovies")]
     public class PeliculasController : ControllerBase
     {
 
