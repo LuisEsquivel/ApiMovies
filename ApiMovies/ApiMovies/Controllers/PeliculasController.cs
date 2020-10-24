@@ -61,10 +61,7 @@ namespace ApiMovies.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult Get()
         {
-
-            try
-            {
-                var list = repository.GetAll();
+               var list = repository.GetAll();
 
                 var listDto = new List<PeliculaAddDto>();
 
@@ -75,13 +72,7 @@ namespace ApiMovies.Controllers
 
 
                 return Ok(this.response.ResponseValues(this.Response.StatusCode, listDto));
-            }
-            catch (Exception)
-            {
-                return BadRequest(this.response.ResponseValues(StatusCodes.Status500InternalServerError));
-            }
-
-
+          
         }
 
 
@@ -96,14 +87,7 @@ namespace ApiMovies.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetById(int Id)
         {
-            try
-            {
             return Ok( this.response.ResponseValues(this.Response.StatusCode , mapper.Map<PeliculaAddDto>(repository.GetById(Id))) );
-            }
-            catch (Exception)
-            {
-                return BadRequest(StatusCodes.Status500InternalServerError);
-            }
         }
 
 
