@@ -7,6 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using ApiMovies.Data;
 using ApiMovies.Dto;
+using ApiMovies.Helpers;
 using ApiMovies.Interface.IGenericRepository;
 using ApiMovies.Models;
 using ApiMovies.Repository;
@@ -33,6 +34,7 @@ namespace ApiMovies.Controllers
         private IMapper mapper;
         private IGenericRepository<Pelicula> repository;
         private IWebHostEnvironment hostEnvironment;
+        private Response response;
 
 
         /// <summary>
@@ -46,6 +48,7 @@ namespace ApiMovies.Controllers
             repository = new GenericRepository<Pelicula>(context);
             mapper = _mapper;
             hostEnvironment = _hostEnvironment;
+            this.response = new Response();
         }
 
         
@@ -58,17 +61,26 @@ namespace ApiMovies.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult Get()
         {
-            var list = repository.GetAll();
 
-            var listDto = new List<PeliculaAddDto>();
-
-            foreach (var row in list)
+            try
             {
-                listDto.Add(mapper.Map<PeliculaAddDto>(row));
+                var list = repository.GetAll();
+
+                var listDto = new List<PeliculaAddDto>();
+
+                foreach (var row in list)
+                {
+                    listDto.Add(mapper.Map<PeliculaAddDto>(row));
+                }
+
+
+                return Ok(this.response.ResponseValues(this.Response.StatusCode, listDto));
+            }
+            catch (Exception)
+            {
+                return BadRequest(this.response.ResponseValues(StatusCodes.Status500InternalServerError));
             }
 
-
-            return Ok(listDto);
 
         }
 
@@ -84,13 +96,14 @@ namespace ApiMovies.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetById(int Id)
         {
-            var row = repository.GetById(Id);
-
-            var rowDto = new List<PeliculaAddDto>();
-
-            rowDto.Add(mapper.Map<PeliculaAddDto>(row));
-
-            return Ok(rowDto);
+            try
+            {
+            return Ok( this.response.ResponseValues(this.Response.StatusCode , mapper.Map<PeliculaAddDto>(repository.GetById(Id))) );
+            }
+            catch (Exception)
+            {
+                return BadRequest(StatusCodes.Status500InternalServerError);
+            }
         }
 
 
@@ -110,7 +123,7 @@ namespace ApiMovies.Controllers
 
             if(dto == null)
             {
-                return BadRequest();
+                return BadRequest(this.response.ResponseValues(StatusCodes.Status406NotAcceptable));
             }
 
             /*subir imágen*/
@@ -136,8 +149,7 @@ namespace ApiMovies.Controllers
 
             if(repository.Exist(x => x.Nombre == dto.Nombre))
             {
-                ModelState.AddModelError("", $"Ya existe una pelicula con el Nombre: {dto.Nombre}");
-                return StatusCode(404, ModelState);
+                return BadRequest(this.response.ResponseValues(StatusCodes.Status406NotAcceptable, null, $"Ya existe una pelicula con el Nombre: {dto.Nombre}"));
             }
 
             var row = mapper.Map<Pelicula>(dto);
@@ -145,8 +157,7 @@ namespace ApiMovies.Controllers
 
             if (!repository.Add(row))
             {
-                ModelState.AddModelError("", $"Algo salió mal al guardar la película: {dto.Nombre}");
-                return StatusCode(500, ModelState);
+                return BadRequest(this.response.ResponseValues(StatusCodes.Status500InternalServerError, null, $"Algo salió mal al guardar la película: {dto.Nombre}"));
             }
 
             return Ok();
@@ -169,13 +180,12 @@ namespace ApiMovies.Controllers
 
             if (dto == null)
             {
-                return BadRequest();
+                return BadRequest(StatusCodes.Status406NotAcceptable);
             }
 
             if (repository.Exist(x => x.Nombre == dto.Nombre && x.Id != dto.Id))
             {
-                ModelState.AddModelError("", $"Ya existe una película con el Nombre: {dto.Nombre}");
-                return StatusCode(404, ModelState);
+               return BadRequest(this.response.ResponseValues(StatusCodes.Status406NotAcceptable, null, $"Ya existe una película con el Nombre: {dto.Nombre}"));
             }
 
             /*subir imágen*/
@@ -218,8 +228,7 @@ namespace ApiMovies.Controllers
 
             if (!repository.Update(row, row.Id))
             {
-                ModelState.AddModelError("", $"Algo salió mal al actualizar la película: {dto.Nombre}");
-                return StatusCode(500, ModelState);
+                return BadRequest(this.response.ResponseValues(StatusCodes.Status500InternalServerError, null, $"Algo salió mal al actualizar la película: {dto.Nombre}"));
             }
 
             return Ok();
@@ -241,23 +250,20 @@ namespace ApiMovies.Controllers
 
             if (Id == 0)
             {
-                ModelState.AddModelError("", $"El parámetro Id es requerido");
-                return StatusCode(404, ModelState);
+                return BadRequest(this.response.ResponseValues(StatusCodes.Status406NotAcceptable, null, $"El parámetro Id es requerido"));
             }
 
             if(repository.Exist(x => x.Id == Id))
             {
-                ModelState.AddModelError("", $"No existe la película");
-                return StatusCode(404, ModelState);
+                return BadRequest(this.response.ResponseValues(StatusCodes.Status404NotFound, null, "No existe la película"));
             }
 
             if (!repository.Delete(Id))
             {
-                ModelState.AddModelError("", $"Algo salió mal al eliminar la película");
-                return StatusCode(500, ModelState);
+                return BadRequest(this.response.ResponseValues(StatusCodes.Status404NotFound, null, "Algo salió mal al eliminar la película"));
             }
 
-            return Ok();
+            return Ok( this.response.ResponseValues(this.Response.StatusCode)  );
 
         }
 

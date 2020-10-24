@@ -6,6 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using ApiMovies.Data;
 using ApiMovies.Dto;
+using ApiMovies.Helpers;
 using ApiMovies.Interface.IGenericRepository;
 using ApiMovies.Mapper;
 using ApiMovies.Models;
@@ -13,7 +14,8 @@ using ApiMovies.Repository;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.OpenApi.Validations;
 
 namespace ApiMovies.Controllers
 {
@@ -31,7 +33,7 @@ namespace ApiMovies.Controllers
 
         private IGenericRepository<Categoria> repository;
         private IMapper mapper;
-
+        private Response response;
 
         /// <summary>
         /// Constructor
@@ -42,6 +44,7 @@ namespace ApiMovies.Controllers
         {
             this.repository = new GenericRepository<Categoria>(context);
             this.mapper = _mapper;
+            response = new Response();
         }
 
 
@@ -78,14 +81,8 @@ namespace ApiMovies.Controllers
         [HttpGet("GetById/{Id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetById(int Id)
-        {
-            var row = repository.GetById(Id);
-
-            var rowDto = new List<CategoriaAddDto>();
-
-            rowDto.Add(mapper.Map<CategoriaAddDto>(row));
-            
-            return Ok(rowDto);
+        {     
+            return Ok(mapper.Map<CategoriaAddDto>(repository.GetById(Id)));
         }
 
 
@@ -103,25 +100,27 @@ namespace ApiMovies.Controllers
         {
             if (dto == null)
             {
-                return BadRequest();
+                return BadRequest(StatusCodes.Status406NotAcceptable);
             }
 
 
             if (repository.Exist(x => x.Nombre == dto.Nombre))
             {
-                ModelState.AddModelError("", "La Categoría ya existe!!");
-                return StatusCode(404, ModelState);
+                return BadRequest(this.response.ResponseValues(StatusCodes.Status406NotAcceptable, null, "La Categoría Ya Existe!!"));
             }
 
             var categoria = mapper.Map<Categoria>(dto);
 
             if (!repository.Add(categoria))
             {
-                ModelState.AddModelError("", $"Algo salió mal guardar el registro: {dto.Nombre}");
-                return StatusCode(500, ModelState);
+                return BadRequest(this.response.ResponseValues(StatusCodes.Status500InternalServerError, null , $"Algo salió mal guardar el registro: {dto.Nombre}"));
             }
 
-            return Ok();
+            return Ok(
+                         response.ResponseValues(this.Response.StatusCode,
+                                                 mapper.Map<CategoriaAddDto>(repository.GetById(categoria.Id))
+                                               )
+                      );
         }
 
 
@@ -139,24 +138,30 @@ namespace ApiMovies.Controllers
         {
             if (dto == null)
             {
-                return BadRequest();
+                return BadRequest(StatusCodes.Status406NotAcceptable);
             }
 
             if (repository.Exist(x => x.Nombre == dto.Nombre && x.Id != dto.Id))
             {
-                ModelState.AddModelError("", "La Categoría ya existe!!");
-                return StatusCode(404, ModelState);
+                return BadRequest(this.response.ResponseValues(StatusCodes.Status406NotAcceptable, null, "La Categoría Ya Existe!!"));
             }
 
             var categoria = mapper.Map<Categoria>(dto);
 
             if (!repository.Update(categoria, categoria.Id))
             {
-                ModelState.AddModelError("", $"Algo salió mal actualizar el registro: {dto.Nombre}");
-                return StatusCode(500, ModelState);
+                return BadRequest(this.response.ResponseValues(StatusCodes.Status500InternalServerError, null, $"Algo salió mal guardar el registro: {dto.Nombre}"));
             }
 
-            return Ok();
+
+
+
+            return Ok(           
+                       response.ResponseValues(this.Response.StatusCode,
+                                               mapper.Map<CategoriaUpdateDto>(repository.GetById(categoria.Id))
+                                             ) 
+                    );
+
         }
 
 
@@ -174,30 +179,27 @@ namespace ApiMovies.Controllers
         {
             if (Id <= 0)
             {
-
-                ModelState.AddModelError("", $"El parámetro (Id) es obligatorio");
-                return StatusCode(404, ModelState);
-                
+                return BadRequest(this.response.ResponseValues(StatusCodes.Status406NotAcceptable, null, $"El parámetro (Id) es obligatorio"));
             }
-   
+
 
             if (repository.Exist(x => x.Id == Id))
             {
-                ModelState.AddModelError("", $"La categoría con Id: {Id} No existe");
-                return StatusCode(404, ModelState);
+                return BadRequest(this.response.ResponseValues(StatusCodes.Status406NotAcceptable, null, $"La categoría con Id: {Id} No existe"));
             }
 
-            var delete =repository.GetByValues(x => x.Id == Id).FirstOrDefault();
+            var row =repository.GetById(Id);
 
-            var categoria = mapper.Map<Categoria>(delete);
+            var categoria = mapper.Map<Categoria>(row);
 
             if (!repository.Delete(categoria))
             {
-                ModelState.AddModelError("", $"Algo salió mal al eliminar el registro: {delete.Nombre}");
-                return StatusCode(500, ModelState);
+                return BadRequest(this.response.ResponseValues(StatusCodes.Status500InternalServerError, null, $"Algo salió mal guardar el registro: {categoria.Nombre}"));
+
             }
 
-            return Ok();
+
+            return Ok(  response.ResponseValues(this.Response.StatusCode) );
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ApiMovies.Data;
 using ApiMovies.Dto.Usuario;
+using ApiMovies.Helpers;
 using ApiMovies.Interface.IGenericRepository;
 using ApiMovies.Models;
 using ApiMovies.Repository;
@@ -30,12 +31,14 @@ namespace ApiMovies.Controllers
         private IGenericRepository<Usuario> repository;
         private IMapper mapper;
         private IConfiguration  config;
+        private Response response;
 
         public UsuariosController(IMapper _mapper, ApplicationDbContext context, IConfiguration _congig)
         {
             this.mapper = _mapper;
             this.repository = new GenericRepository<Usuario>(context);
             this.config = _congig;
+            this.response = new Response();
         }
 
 
@@ -48,7 +51,6 @@ namespace ApiMovies.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult Get()
         {
-
             var dto = repository.GetAll();
             var user = new List<UsuarioDto>();
 
@@ -73,7 +75,7 @@ namespace ApiMovies.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetById(int Id)
         {
-            return Ok( mapper.Map<UsuarioDto> ( repository.GetById(Id) ) );
+                return Ok( mapper.Map<UsuarioDto> ( repository.GetById(Id) ) );
         }
 
 
@@ -93,7 +95,7 @@ namespace ApiMovies.Controllers
 
             if(dto == null)
             {
-                return BadRequest();
+                return BadRequest(StatusCodes.Status406NotAcceptable);
             }
 
             byte[] passwordHash, passwordSalt;
@@ -109,11 +111,10 @@ namespace ApiMovies.Controllers
 
             if ( !repository.Add(u) )
             {
-                ModelState.AddModelError("", $"Algo salió mal guardar el registro: {user.Email}");
-                return StatusCode(500, ModelState);
+                return BadRequest(this.response.ResponseValues(StatusCodes.Status500InternalServerError, null, $"Algo salió mal guardar el registro: {user.Email}"));
             }
 
-            return Ok();
+            return Ok( this.response.ResponseValues(this.Response.StatusCode, mapper.Map<UsuarioDto>(this.repository.GetById(u.Id))) );
         }
 
 

@@ -31,9 +31,7 @@ namespace ApiMovies.Repository
 
         public T GetById(object id)
         {
-
             return table.Find(id);
-
         }
 
         public IEnumerable<T> GetByValues(Func<T, bool> values)
@@ -46,13 +44,13 @@ namespace ApiMovies.Repository
            return  table.Where(values).AsEnumerable().Count() > 0 ? true : false;
         }
 
-        public Boolean Add(T obj)
+        public bool Add(T obj)
         {
             table.Add(obj);
             return Save();
         }
 
-        public Boolean Update(T obj, int id = 0)
+        public bool Update(T obj, int id = 0)
         {
             if (id > 0) {
                 var exist = table.Find(id);
@@ -62,10 +60,9 @@ namespace ApiMovies.Repository
             table.Attach(obj);
             _context.Entry(obj).State = EntityState.Modified;
             return Save();
-
         }
 
-        public Boolean Delete(object id)
+        public bool Delete(object id)
         {
             T row = table.Find(id);
 
