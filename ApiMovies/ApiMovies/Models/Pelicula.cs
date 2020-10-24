@@ -24,6 +24,7 @@ namespace ApiMovies.Models
 
         public TipoClasificacion Clasificacion { get; set; }
 
+        [Required (ErrorMessage ="La Categoría es requerida")]
         public int CategoriaId { get; set; }
 
         [ForeignKey("CategoriaId")]
