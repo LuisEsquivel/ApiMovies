@@ -215,7 +215,7 @@ namespace ApiMovies.Controllers
                 return BadRequest(this.response.ResponseValues(StatusCodes.Status500InternalServerError, null, $"Algo salió mal al actualizar la película: {dto.Nombre}"));
             }
 
-            return Ok();
+            return Ok( this.response.ResponseValues(this.Response.StatusCode, this.repository.GetById(row.Id) ));
 
         }
 
