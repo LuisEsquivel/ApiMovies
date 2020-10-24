@@ -67,7 +67,7 @@ namespace ApiMovies.Controllers
                 listDto.Add(mapper.Map<CategoriaAddDto>(row));
             }
 
-            return Ok(listDto);
+            return Ok(this.response.ResponseValues(this.Response.StatusCode, listDto));
         }
 
 
@@ -82,7 +82,7 @@ namespace ApiMovies.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetById(int Id)
         {     
-            return Ok(mapper.Map<CategoriaAddDto>(repository.GetById(Id)));
+            return Ok( this.response.ResponseValues( this.Response.StatusCode, mapper.Map<CategoriaAddDto>(repository.GetById(Id))  ));
         }
 
 

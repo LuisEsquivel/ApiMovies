@@ -71,7 +71,7 @@ namespace ApiMovies.Controllers
                 }
 
 
-                return Ok(this.response.ResponseValues(this.Response.StatusCode, listDto));
+                return Ok( this.response.ResponseValues(this.Response.StatusCode, listDto)   );
           
         }
 

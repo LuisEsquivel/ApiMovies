@@ -60,7 +60,7 @@ namespace ApiMovies.Controllers
             }
             
 
-          return Ok( user );
+          return Ok( this.response.ResponseValues(this.Response.StatusCode, user ) );
         }
 
 
@@ -75,7 +75,7 @@ namespace ApiMovies.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetById(int Id)
         {
-                return Ok( mapper.Map<UsuarioDto> ( repository.GetById(Id) ) );
+                return Ok( this.response.ResponseValues( this.Response.StatusCode, mapper.Map<UsuarioDto> ( repository.GetById(Id) ) ));
         }
 
 
