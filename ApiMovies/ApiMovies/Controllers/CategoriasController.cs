@@ -151,10 +151,8 @@ namespace ApiMovies.Controllers
 
             if (!repository.Update(categoria, categoria.Id))
             {
-                return BadRequest(this.response.ResponseValues(StatusCodes.Status500InternalServerError, null, $"Algo salió mal guardar el registro: {dto.Nombre}"));
+                return BadRequest(this.response.ResponseValues(StatusCodes.Status500InternalServerError, null, $"Algo salió mal al actualizar el registro: {dto.Nombre}"));
             }
-
-
 
 
             return Ok(           
@@ -195,7 +193,7 @@ namespace ApiMovies.Controllers
 
             if (!repository.Delete(categoria))
             {
-                return BadRequest(this.response.ResponseValues(StatusCodes.Status500InternalServerError, null, $"Algo salió mal guardar el registro: {categoria.Nombre}"));
+                return BadRequest(this.response.ResponseValues(StatusCodes.Status500InternalServerError, null, $"Algo salió mal al eliminar el registro: {categoria.Nombre}"));
 
             }
 
