@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using ApiMovies.Data;
+using ApiMovies.Helpers;
 using ApiMovies.Interface.IGenericRepository;
 using ApiMovies.Mapper;
 using ApiMovies.Repository;
@@ -142,7 +143,9 @@ namespace ApiMovies
 
                     var result = JsonConvert.SerializeObject(new { error = exception.Message });
                     context.Response.ContentType = "application/json";
-                    await context.Response.WriteAsync(result);
+
+                    var response = new Response();
+                    await context.Response.WriteAsync((string)response.ResponseValues( context.Response.StatusCode, null, result.ToString() ));
                 }));
             }
 

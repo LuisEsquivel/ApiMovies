@@ -7,6 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using ApiMovies.Data;
 using ApiMovies.Dto;
+using ApiMovies.Dto.Pelicula;
 using ApiMovies.Helpers;
 using ApiMovies.Interface.IGenericRepository;
 using ApiMovies.Models;
@@ -61,13 +62,14 @@ namespace ApiMovies.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult Get()
         {
-               var list = repository.GetAll();
 
-                var listDto = new List<PeliculaAddDto>();
+                var list = repository.GetAll();
+
+                var listDto = new List<PeliculaDto>();
 
                 foreach (var row in list)
                 {
-                    listDto.Add(mapper.Map<PeliculaAddDto>(row));
+                    listDto.Add(mapper.Map<PeliculaDto>(row));
                 }
 
 
@@ -87,7 +89,7 @@ namespace ApiMovies.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetById(int Id)
         {
-            return Ok( this.response.ResponseValues(this.Response.StatusCode , mapper.Map<PeliculaAddDto>(repository.GetById(Id))) );
+            return Ok( this.response.ResponseValues(this.Response.StatusCode , mapper.Map<PeliculaDto>(repository.GetById(Id))) );
         }
 
 
